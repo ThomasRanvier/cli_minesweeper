@@ -11,7 +11,7 @@ MIN_SIZE = 10
 MAX_SIZE = 50
 
 class Game():
-    def __init__(self, size=20, bombs_proportion=0.15):
+    def __init__(self, size, bombs_proportion):
         random.seed(time.time())
 
         self.__size = size
@@ -41,7 +41,7 @@ class Game():
 
     def go(self):
         os.system('setterm -cursor off')
-        print(str(self.__bombs_count) + ' bombs')
+        print(str(self.__size) + 'x' + str(self.__size) + ' ' + str(self.__bombs_count) + ' bombs')
         while self.__status == 'in_game':
             self.__drawer.draw(self.__grid, self.__grid_mask, self.__cursor)
             user_char = getch.getch()
@@ -126,6 +126,30 @@ class Game():
                 self.__grid_mask[x][y + 1] = 1
                 if self.__grid[x][y + 1] == 0:
                     self.__flood_empty(x, y + 1)
+        if x > 0 and y > 0:
+            if self.__grid_mask[x - 1][y - 1] != 1:
+                self.__hidden_count -= 1
+                self.__grid_mask[x - 1][y - 1] = 1
+                if self.__grid[x - 1][y - 1] == 0:
+                    self.__flood_empty(x - 1, y - 1)
+        if x > 0 and y < self.__size - 1:
+            if self.__grid_mask[x - 1][y + 1] != 1:
+                self.__hidden_count -= 1
+                self.__grid_mask[x - 1][y + 1] = 1
+                if self.__grid[x - 1][y + 1] == 0:
+                    self.__flood_empty(x - 1, y + 1)
+        if x < self.__size - 1 and y > 0:
+            if self.__grid_mask[x + 1][y - 1] != 1:
+                self.__hidden_count -= 1
+                self.__grid_mask[x + 1][y - 1] = 1
+                if self.__grid[x + 1][y - 1] == 0:
+                    self.__flood_empty(x + 1, y - 1)
+        if x < self.__size - 1 and y < self.__size - 1:
+            if self.__grid_mask[x + 1][y + 1] != 1:
+                self.__hidden_count -= 1
+                self.__grid_mask[x + 1][y + 1] = 1
+                if self.__grid[x + 1][y + 1] == 0:
+                    self.__flood_empty(x + 1, y + 1)
 
     def __update_flag(self):
         x = self.__cursor['x']

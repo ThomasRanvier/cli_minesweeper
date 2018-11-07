@@ -40,7 +40,6 @@ class Drawer():
         added = False
         if shockwave != None:
             if shockwave[x][y] == 2:
-                color = 'white'
                 background = 'on_red'
                 bold = True
                 added = True
