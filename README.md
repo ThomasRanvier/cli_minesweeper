@@ -2,7 +2,7 @@
 
 This project is about developing a minesweeper played with a command line interface.
 
-Inline-style: 
+Grid 30 by 30:
 ![grid 30 by 30](30_30.png "Grid 30 by 30")
 
 To launch the script type the following command:
