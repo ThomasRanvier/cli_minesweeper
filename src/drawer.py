@@ -155,6 +155,6 @@ class Drawer():
                 if not exploding_in_neighbourhood:
                     shockwave[x][y] = 0
                     shockwave_3.remove((x, y))
-            sleep_time = min(0, 0.05 - (time.process_time() - start))
-            time.sleep(0.05)
+            sleep_time = max(0, 0.05 - (time.process_time() - start))
+            time.sleep(sleep_time)
             iterations += 1
