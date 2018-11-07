@@ -1,0 +1,46 @@
+import sys
+import time
+
+class Bot():
+    def __init__(self, game):
+        self.__game = game
+
+    def play(self):
+        self.__game.go_down()
+        self.__game.go_down()
+        self.__game.go_down()
+        self.__game.go_down()
+        self.__game.go_up()
+        self.__game.go_right()
+        self.__game.go_right()
+        self.__game.go_right()
+        self.__game.go_right()
+        self.__game.go_right()
+        self.__game.go_right()
+        self.__game.go_right()
+        self.__game.go_down()
+        self.__game.go_down()
+        self.__game.go_down()
+        self.__game.go_up()
+        self.__game.go_up()
+        self.__game.go_up()
+        self.__game.go_up()
+        self.__game.go_up()
+        self.__game.go_left()
+        self.__game.go_left()
+        self.__game.go_left()
+        self.__game.reveal_cell()
+        self.__game.go_down()
+        self.__game.reveal_around()
+        self.__game.go_down()
+        self.__game.reveal_around()
+        self.__game.go_down()
+        self.__game.reveal_around()
+        self.__game.go_down()
+        self.__game.reveal_around()
+        self.__game.go_down()
+        self.__game.reveal_around()
+        self.__game.go_down()
+        self.__game.reveal_around()
+        self.__game.go_down()
+        self.__game.reveal_around()

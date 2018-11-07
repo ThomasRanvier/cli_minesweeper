@@ -25,71 +25,100 @@ class Game():
         if bombs_proportion > MAX_BOMBS:
             bombs_proportion = MAX_BOMBS
         self.__bombs_count = int(bombs_proportion * self.__size**2)
+        self.__hidden_count = self.__size**2 - self.__bombs_count
         
         self.__grid = [[0 for _ in range(self.__size)] for _ in range(self.__size)]
         self.__grid_mask = [[0 for _ in range(self.__size)] for _ in range(self.__size)]
         self.__bombs_placed = False
-
-        self.__drawer = Drawer(self.__size)
+        
         self.__cursor = {'x': 0, 'y': 0}
-
         self.__status = 'in_game'
-        self.__hidden_count = self.__size**2 - self.__bombs_count
-    
-    def __del__(self):
-        os.system('setterm -cursor on')
 
-    def go(self):
-        os.system('setterm -cursor off')
-        print(str(self.__size) + 'x' + str(self.__size) + ' ' + str(self.__bombs_count) + ' bombs')
+        self.__drawer = Drawer(self.__size, self.__bombs_count)
+        self.__drawer.draw(self.__grid, self.__grid_mask, self.__cursor)
+        
+    def play_as_player(self):
         while self.__status == 'in_game':
-            self.__drawer.draw(self.__grid, self.__grid_mask, self.__cursor)
             user_char = getch.getch()
-            if user_char == 'h':
-                if self.__cursor['x'] > 0:
-                    self.__cursor['x'] -= 1
-            if user_char == 'j':
-                if self.__cursor['y'] < self.__size - 1:
-                    self.__cursor['y'] += 1
-            if user_char == 'k':
-                if self.__cursor['y'] > 0:
-                    self.__cursor['y'] -= 1
-            if user_char == 'l':
-                if self.__cursor['x'] < self.__size - 1:
-                    self.__cursor['x'] += 1
-            if user_char == 'f':
-                self.__update_flag()
-            if user_char == ' ':
-                if not self.__bombs_placed:
-                    self.__place_bombs()
-                self.__show_cell(self.__cursor['x'], self.__cursor['y'])
-            if user_char == 'a':
-                if not self.__bombs_placed:
-                    self.__place_bombs()
-                self.__show_around()
-        self.__drawer.display_end_screen(self.__status, self.__grid, self.__grid_mask, self.__cursor)
+            self.__action(user_char)
+    
+    def __action(self, user_char):
+        if user_char == 'h':
+            self.go_left()
+        if user_char == 'j':
+            self.go_down()
+        if user_char == 'k':
+            self.go_up()
+        if user_char == 'l':
+            self.go_right()
+        if user_char == 'f':
+            self.update_flag()
+        if user_char == ' ':
+            self.reveal_cell()
+        if user_char == 'a':
+            self.reveal_around()
 
-    def __show_around(self):
+    def __draw(self):
+        if self.__status == 'in_game':
+            self.__drawer.draw(self.__grid, self.__grid_mask, self.__cursor)
+        else:
+            self.__drawer.display_end_screen(self.__status, self.__grid, self.__grid_mask, self.__cursor)
+
+    def reveal_around(self):
+        if self.__status == 'in_game':
+            if not self.__bombs_placed:
+                self.__place_bombs()
+            self.__reveal_around()
+            self.__draw()
+
+    def reveal_cell(self):
+        if self.__status == 'in_game':
+            if not self.__bombs_placed:
+                self.__place_bombs()
+            self.__reveal_cell(self.__cursor['x'], self.__cursor['y'])
+            self.__draw()
+
+    def go_right(self):
+        if self.__status == 'in_game' and self.__cursor['x'] < self.__size - 1:
+            self.__cursor['x'] += 1
+            self.__draw()
+
+    def go_up(self):
+        if self.__status == 'in_game' and self.__cursor['y'] > 0:
+            self.__cursor['y'] -= 1
+            self.__draw()
+
+    def go_left(self):
+        if self.__status == 'in_game' and self.__cursor['x'] > 0:
+            self.__cursor['x'] -= 1
+            self.__draw()
+
+    def go_down(self):
+        if self.__status == 'in_game' and self.__cursor['y'] < self.__size - 1:
+            self.__cursor['y'] += 1
+            self.__draw()
+
+    def __reveal_around(self):
         x = self.__cursor['x']
         y = self.__cursor['y']
         if x > 0 and y > 0:
-            self.__show_cell(x - 1, y - 1)
+            self.__reveal_cell(x - 1, y - 1)
         if x > 0:
-            self.__show_cell(x - 1, y)
+            self.__reveal_cell(x - 1, y)
         if x > 0 and y < self.__size - 1:
-            self.__show_cell(x - 1, y + 1)
+            self.__reveal_cell(x - 1, y + 1)
         if y > 0:
-            self.__show_cell(x, y - 1)
+            self.__reveal_cell(x, y - 1)
         if y < self.__size - 1:
-            self.__show_cell(x, y + 1)
+            self.__reveal_cell(x, y + 1)
         if x < self.__size - 1 and y > 0:
-            self.__show_cell(x + 1, y - 1)
+            self.__reveal_cell(x + 1, y - 1)
         if x < self.__size - 1:
-            self.__show_cell(x + 1, y)
+            self.__reveal_cell(x + 1, y)
         if x < self.__size - 1 and y < self.__size - 1:
-            self.__show_cell(x + 1, y + 1)
+            self.__reveal_cell(x + 1, y + 1)
 
-    def __show_cell(self, x, y):
+    def __reveal_cell(self, x, y):
         if self.__grid_mask[x][y] == 0:
             self.__hidden_count -= 1
             self.__grid_mask[x][y] = 1
@@ -151,7 +180,7 @@ class Game():
                 if self.__grid[x + 1][y + 1] == 0:
                     self.__flood_empty(x + 1, y + 1)
 
-    def __update_flag(self):
+    def update_flag(self):
         x = self.__cursor['x']
         y = self.__cursor['y']
         if self.__grid_mask[x][y] == 2:

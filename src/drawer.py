@@ -4,11 +4,14 @@ import sys
 import os
 
 class Drawer():
-    def __init__(self, size):
+    def __init__(self, size, bombs_count):
         self.__size = size
         self.__clear = True
+        os.system('setterm -cursor off')
+        print(str(self.__size) + 'x' + str(self.__size) + ' ' + str(bombs_count) + ' bombs')
     
     def __del__(self):
+        os.system('setterm -cursor on')
         if self.__clear:
             os.system('clear')
     
@@ -33,7 +36,7 @@ class Drawer():
             sys.stdout.write(self.__size * '\033[F')
 
     def __get_cell(self, x, y, cursor, grid, grid_mask, shockwave=None):
-        char = '#'
+        char = '?'
         color = 'grey'
         bold = False
         background = None
@@ -43,9 +46,11 @@ class Drawer():
                 background = 'on_red'
                 bold = True
                 added = True
+                char = '#'
             elif shockwave[x][y] == 3:
                 color = 'red'
                 added = True
+                char = '#'
         if not added:
             if grid_mask[x][y] == 1:
                 if grid[x][y] > 0:
