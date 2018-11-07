@@ -98,63 +98,53 @@ class Drawer():
         shockwave_out = False
         shockwave = [[0 for _ in range(self.__size)] for _ in range(self.__size)]
         iterations = 0
-        shockwave_2 = set()
-        shockwave_3 = set()
         while not shockwave_out:
-            start = time.process_time()
             if iterations == 0 or iterations == 2 or iterations == 4 or iterations == 6 or iterations == 8:
                 shockwave[cursor['x']][cursor['y']] = 2
-                shockwave_2.add((cursor['x'], cursor['y']))
             self.draw(grid, grid_mask, {'x': -1, 'y':-1}, shockwave)
-
-            shockwave_1 = set()
+            to_update_to_2 = []
             shockwave_out = True
-            for x, y in shockwave_2:
-                shockwave_out = False
-                if x > 0:
-                    if shockwave[x - 1][y] == 0:
-                        shockwave[x - 1][y] = 1
-                        shockwave_1.add((x - 1, y))
-                if y > 0:
-                    if shockwave[x][y - 1] == 0:
-                        shockwave[x][y - 1] = 1
-                        shockwave_1.add((x, y - 1))
-                if x < self.__size - 1:
-                    if shockwave[x + 1][y] == 0:
-                        shockwave[x + 1][y] = 1
-                        shockwave_1.add((x + 1, y))
-                if y < self.__size - 1:
-                    if shockwave[x][y + 1] == 0:
-                        shockwave[x][y + 1] = 1
-                        shockwave_1.add((x, y + 1))
-                shockwave[x][y] = 3
-                shockwave_3.add((x, y))
-            shockwave_2 = set()
-
-            for x, y in shockwave_1:
+            for x in range(self.__size):
+                for y in range(self.__size):
+                    if shockwave[x][y] == 2:
+                        shockwave_out = False
+                        if x > 0:
+                            if shockwave[x - 1][y] == 0:
+                                shockwave[x - 1][y] = 1
+                                to_update_to_2.append((x - 1, y))
+                        if y > 0:
+                            if shockwave[x][y - 1] == 0:
+                                shockwave[x][y - 1] = 1
+                                to_update_to_2.append((x, y - 1))
+                        if x < self.__size - 1:
+                            if shockwave[x + 1][y] == 0:
+                                shockwave[x + 1][y] = 1
+                                to_update_to_2.append((x + 1, y))
+                        if y < self.__size - 1:
+                            if shockwave[x][y + 1] == 0:
+                                shockwave[x][y + 1] = 1
+                                to_update_to_2.append((x, y + 1))
+                        shockwave[x][y] = 3
+            for x, y in to_update_to_2:
                 grid_mask[x][y] = 1
                 shockwave[x][y] = 2
-                shockwave_2.add((x, y))
-
-            shockwave_3_temp = list(shockwave_3)
-            shockwave_3_mem = [(x, y) for x, y in shockwave_3_temp]
-            for x, y in shockwave_3_mem:
-                exploding_in_neighbourhood = False
-                if x > 0:
-                    if shockwave[x - 1][y] == 2:
-                        exploding_in_neighbourhood = True
-                if y > 0:
-                    if shockwave[x][y - 1] == 2:
-                        exploding_in_neighbourhood = True
-                if x < self.__size - 1:
-                    if shockwave[x + 1][y] == 2:
-                        exploding_in_neighbourhood = True
-                if y < self.__size - 1:
-                    if shockwave[x][y + 1] == 2:
-                        exploding_in_neighbourhood = True
-                if not exploding_in_neighbourhood:
-                    shockwave[x][y] = 0
-                    shockwave_3.remove((x, y))
-            sleep_time = min(0, 0.05 - (time.process_time() - start))
+            for x in range(self.__size):
+                for y in range(self.__size):
+                    if shockwave[x][y] == 3:
+                        exploding_in_neighbourhood = False
+                        if x > 0:
+                            if shockwave[x - 1][y] == 2:
+                                exploding_in_neighbourhood = True
+                        if y > 0:
+                            if shockwave[x][y - 1] == 2:
+                                exploding_in_neighbourhood = True
+                        if x < self.__size - 1:
+                            if shockwave[x + 1][y] == 2:
+                                exploding_in_neighbourhood = True
+                        if y < self.__size - 1:
+                            if shockwave[x][y + 1] == 2:
+                                exploding_in_neighbourhood = True
+                        if not exploding_in_neighbourhood:
+                            shockwave[x][y] = 0
             time.sleep(0.05)
             iterations += 1
