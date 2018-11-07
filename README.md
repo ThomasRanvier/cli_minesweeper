@@ -5,10 +5,11 @@ This project is about developing a minesweeper played with a command line interf
 Usage:
 > python3 minesweeper.py [-h] [-s SIZE] [-b BOMBS]
 
-optional arguments:
+optional arguments | decription
+--- | ---
 -h, --help              | show this help message and exit
--s SIZE, --size SIZE    | The size of the grid. Default: 20, min: 10, max: 50.
--b BOMBS, --bombs BOMBS | The proportion of bombs in the grid. Default: 0.15, min: 0.05, max: 0.35.
+-s SIZE, --size SIZE    | the size of the grid, default: 20, min: 10, max: 50.
+-b BOMBS, --bombs BOMBS | the proportion of bombs in the grid, default: 0.15, min: 0.05, max: 0.35
 
 The game is played with VIM controls:
 * h: deplace cursor left
