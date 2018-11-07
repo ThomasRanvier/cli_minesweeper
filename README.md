@@ -2,6 +2,9 @@
 
 This project is about developing a minesweeper played with a command line interface.
 
+Inline-style: 
+![grid 30 by 30](30_30.png "Grid 30 by 30")
+
 To launch the script type the following command:
 > python3 minesweeper.py [grid size] [bombs proportion]
 
