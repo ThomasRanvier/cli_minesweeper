@@ -4,6 +4,7 @@ import time
 import os
 import signal
 import random
+from copy import deepcopy
 
 MIN_BOMBS = 0.05
 MAX_BOMBS = 0.35
@@ -51,6 +52,14 @@ class Game():
             self.go_up()
         if user_char == 'l':
             self.go_right()
+        if user_char == 'H':
+            self.go_max_left()
+        if user_char == 'J':
+            self.go_max_down()
+        if user_char == 'K':
+            self.go_max_up()
+        if user_char == 'L':
+            self.go_max_right()
         if user_char == 'f':
             self.update_flag()
         if user_char == ' ':
@@ -77,6 +86,26 @@ class Game():
                 self.__place_bombs()
             self.__reveal_cell(self.__cursor['x'], self.__cursor['y'])
             self.__draw()
+    
+    def go_max_right(self):
+        if self.__status == 'in_game':
+            self.__cursor['x'] = self.__size - 1
+            self.__draw()
+
+    def go_max_up(self):
+        if self.__status == 'in_game':
+            self.__cursor['y'] = 0
+            self.__draw()
+
+    def go_max_left(self):
+        if self.__status == 'in_game':
+            self.__cursor['x'] = 0
+            self.__draw()
+
+    def go_max_down(self):
+        if self.__status == 'in_game':
+            self.__cursor['y'] = self.__size - 1
+            self.__draw()
 
     def go_right(self):
         if self.__status == 'in_game' and self.__cursor['x'] < self.__size - 1:
@@ -98,24 +127,34 @@ class Game():
             self.__cursor['y'] += 1
             self.__draw()
 
+    def update_flag(self):
+        if self.__status == 'in_game':
+            x = self.__cursor['x']
+            y = self.__cursor['y']
+            if self.__grid_mask[x][y] == 2:
+                self.__grid_mask[x][y] = 0
+            elif self.__grid_mask[x][y] == 0:
+                self.__grid_mask[x][y] = 2
+            self.__draw()
+
     def __reveal_around(self):
         x = self.__cursor['x']
         y = self.__cursor['y']
         if x > 0 and y > 0:
             self.__reveal_cell(x - 1, y - 1)
-        if x > 0:
+        if x > 0 and self.__status == 'in_game':
             self.__reveal_cell(x - 1, y)
-        if x > 0 and y < self.__size - 1:
+        if x > 0 and y < self.__size - 1 and self.__status == 'in_game':
             self.__reveal_cell(x - 1, y + 1)
-        if y > 0:
+        if y > 0 and self.__status == 'in_game':
             self.__reveal_cell(x, y - 1)
-        if y < self.__size - 1:
+        if y < self.__size - 1 and self.__status == 'in_game':
             self.__reveal_cell(x, y + 1)
-        if x < self.__size - 1 and y > 0:
+        if x < self.__size - 1 and y > 0 and self.__status == 'in_game':
             self.__reveal_cell(x + 1, y - 1)
-        if x < self.__size - 1:
+        if x < self.__size - 1 and self.__status == 'in_game':
             self.__reveal_cell(x + 1, y)
-        if x < self.__size - 1 and y < self.__size - 1:
+        if x < self.__size - 1 and y < self.__size - 1 and self.__status == 'in_game':
             self.__reveal_cell(x + 1, y + 1)
 
     def __reveal_cell(self, x, y):
@@ -131,63 +170,50 @@ class Game():
                     self.__flood_empty(x, y)
 
     def __flood_empty(self, x, y):
-        if x > 0:
-            if self.__grid_mask[x - 1][y] != 1:
-                self.__hidden_count -= 1
-                self.__grid_mask[x - 1][y] = 1
-                if self.__grid[x - 1][y] == 0:
-                    self.__flood_empty(x - 1, y)
-        if y > 0:
-            if self.__grid_mask[x][y - 1] != 1:
-                self.__hidden_count -= 1
-                self.__grid_mask[x][y - 1] = 1
-                if self.__grid[x][y - 1] == 0:
-                    self.__flood_empty(x, y - 1)
-        if x < self.__size - 1:
-            if self.__grid_mask[x + 1][y] != 1:
-                self.__hidden_count -= 1
-                self.__grid_mask[x + 1][y] = 1
-                if self.__grid[x + 1][y] == 0:
-                    self.__flood_empty(x + 1, y)
-        if y < self.__size - 1:
-            if self.__grid_mask[x][y + 1] != 1:
-                self.__hidden_count -= 1
-                self.__grid_mask[x][y + 1] = 1
-                if self.__grid[x][y + 1] == 0:
-                    self.__flood_empty(x, y + 1)
-        if x > 0 and y > 0:
-            if self.__grid_mask[x - 1][y - 1] != 1:
-                self.__hidden_count -= 1
-                self.__grid_mask[x - 1][y - 1] = 1
-                if self.__grid[x - 1][y - 1] == 0:
-                    self.__flood_empty(x - 1, y - 1)
-        if x > 0 and y < self.__size - 1:
-            if self.__grid_mask[x - 1][y + 1] != 1:
-                self.__hidden_count -= 1
-                self.__grid_mask[x - 1][y + 1] = 1
-                if self.__grid[x - 1][y + 1] == 0:
-                    self.__flood_empty(x - 1, y + 1)
-        if x < self.__size - 1 and y > 0:
-            if self.__grid_mask[x + 1][y - 1] != 1:
-                self.__hidden_count -= 1
-                self.__grid_mask[x + 1][y - 1] = 1
-                if self.__grid[x + 1][y - 1] == 0:
-                    self.__flood_empty(x + 1, y - 1)
-        if x < self.__size - 1 and y < self.__size - 1:
-            if self.__grid_mask[x + 1][y + 1] != 1:
-                self.__hidden_count -= 1
-                self.__grid_mask[x + 1][y + 1] = 1
-                if self.__grid[x + 1][y + 1] == 0:
-                    self.__flood_empty(x + 1, y + 1)
-
-    def update_flag(self):
-        x = self.__cursor['x']
-        y = self.__cursor['y']
-        if self.__grid_mask[x][y] == 2:
-            self.__grid_mask[x][y] = 0
-        elif self.__grid_mask[x][y] == 0:
-            self.__grid_mask[x][y] = 2
-            
+        queue = [(x, y)]
+        while queue:
+            cell = queue.pop(0)
+            if cell[0] > 0:
+                new_cell = self.__flood(cell[0] - 1, cell[1])
+                if new_cell != None:
+                    queue.append(new_cell)
+            if cell[1] > 0:
+                new_cell = self.__flood(cell[0], cell[1] - 1)
+                if new_cell != None:
+                    queue.append(new_cell)
+            if cell[0] < self.__size - 1:
+                new_cell = self.__flood(cell[0] + 1, cell[1])
+                if new_cell != None:
+                    queue.append(new_cell)
+            if cell[1] < self.__size - 1:
+                new_cell = self.__flood(cell[0], cell[1] + 1)
+                if new_cell != None:
+                    queue.append(new_cell)
+            if cell[0] > 0 and cell[1] > 0:
+                new_cell = self.__flood(cell[0] - 1, cell[1] - 1)
+                if new_cell != None:
+                    queue.append(new_cell)
+            if cell[0] > 0 and cell[1] < self.__size - 1:
+                new_cell = self.__flood(cell[0] - 1, cell[1] + 1)
+                if new_cell != None:
+                    queue.append(new_cell)
+            if cell[0] < self.__size - 1 and cell[1] > 0:
+                new_cell = self.__flood(cell[0] + 1, cell[1] - 1)
+                if new_cell != None:
+                    queue.append(new_cell)
+            if cell[0] < self.__size - 1 and cell[1] < self.__size - 1:
+                new_cell = self.__flood(cell[0] + 1, cell[1] + 1)
+                if new_cell != None:
+                    queue.append(new_cell)
+    
+    def __flood(self, x, y):
+        cell = None
+        if self.__grid_mask[x][y] != 1:
+            self.__hidden_count -= 1
+            self.__grid_mask[x][y] = 1
+            if self.__grid[x][y] == 0:
+                cell = (x, y)
+        return cell
 
     def __place_bombs(self):
         for _ in range(self.__bombs_count):
@@ -224,3 +250,24 @@ class Game():
             count += 1
         return count
 
+    def get_cursor(self):
+        return self.__cursor
+    
+    def get_status(self):
+        return self.__status
+
+    def get_size(self):
+        return self.__size
+
+    def get_bombs_count(self):
+        return self.__bombs_count
+
+    def get_grid(self):
+        grid = deepcopy(self.__grid)
+        for x in range(self.__size):
+            for y in range(self.__size):
+                if self.__grid_mask[x][y] == 0:
+                    grid[x][y] = None
+                elif self.__grid_mask[x][y] == 2:
+                    grid[x][y] = -2
+        return grid

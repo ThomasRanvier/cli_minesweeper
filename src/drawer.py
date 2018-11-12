@@ -1,3 +1,4 @@
+from copy import deepcopy
 from termcolor import colored
 import time
 import sys
@@ -137,12 +138,12 @@ class Drawer():
             shockwave_2 = set()
 
             for x, y in shockwave_1:
-                grid_mask[x][y] = 1
+                if grid[x][y] == -1:
+                    grid_mask[x][y] = 1
                 shockwave[x][y] = 2
                 shockwave_2.add((x, y))
 
-            shockwave_3_temp = list(shockwave_3)
-            shockwave_3_mem = [(x, y) for x, y in shockwave_3_temp]
+            shockwave_3_mem = deepcopy(shockwave_3)
             for x, y in shockwave_3_mem:
                 exploding_in_neighbourhood = False
                 if x > 0:
