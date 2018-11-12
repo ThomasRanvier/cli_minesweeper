@@ -1,5 +1,9 @@
+import logging
 import sys
+import random
 import time
+
+logging.basicConfig(filename='bot.log', level=logging.DEBUG)
 
 class Bot():
     def __init__(self, game):
@@ -8,34 +12,39 @@ class Bot():
         self.__revealed_count = 0
         self.__bombs_count = self.__game.get_bombs_count()
         self.__placed_flags = 0
-        self.__no_need_to_check = []
+        self.__no_need_to_check_again = []
         self.__grid = []
+        random.seed(time.time())
 
     def play(self):
-        mid = int(self.__size / 2) - 1
-        self.__reveal(mid, mid)
+        self.__reveal(random.randint(0, self.__size - 1), random.randint(0, self.__size - 1))
         self.__revealed_count += 1
         self.__grid = self.__game.get_grid()
-        #while self.__game.get_status() == 'in_game':
-        self.__choose_best_move()
-            #grid = self.__game.get_grid()
+        while self.__game.get_status() == 'in_game':
+            self.__choose_best_move()
+            self.__grid = self.__game.get_grid()
 
     def __choose_best_move(self):
         self.__naive_moves()
 
     def __naive_moves(self):
+        move_found = False
         for x in range(self.__size):
             for y in range(self.__size):
-                if self.__grid[x][y] != None and self.__grid[x][y] > 0 and (x, y) not in self.__no_need_to_check:
+                if self.__grid[x][y] != None and self.__grid[x][y] > 0 and (x, y) not in self.__no_need_to_check_again:
                     flags_around = self.__count_around(x, y, -2)
                     hiddens_around = self.__count_around(x, y, None)
+                    logging.debug(str(x) + ' ' + str(y) + ': ' + str(flags_around) + ' ' + str(hiddens_around))
                     if self.__grid[x][y] > flags_around:
                         if hiddens_around + flags_around == self.__grid[x][y]:
                             self.__put_flags_around(x, y)
-                    #else:
-                        #self.__reveal_around(x, y)
-                        #self.__revealed_count += hiddens_around
-                        #self.__no_need_to_check.append((x, y))
+                            move_found = True
+                    else:
+                        self.__reveal_around(x, y)
+                        self.__revealed_count += hiddens_around
+                        self.__no_need_to_check_again.append((x, y))
+                        move_found = True
+        return move_found
 
     def __put_flags_around(self, x, y):
         if x > 0:

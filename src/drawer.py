@@ -8,6 +8,7 @@ class Drawer():
     def __init__(self, size, bombs_count):
         self.__size = size
         self.__clear = True
+        self.__first_draw = False
         os.system('setterm -cursor off')
         print(str(self.__size) + 'x' + str(self.__size) + ' ' + str(bombs_count) + ' bombs')
     
@@ -17,6 +18,9 @@ class Drawer():
             os.system('clear')
     
     def draw(self, grid, grid_mask, cursor, shockwave=None, clean=True):
+        if self.__first_draw:
+            sys.stdout.write(self.__size * '\033[F')
+        self.__first_draw = True
         for y in range(self.__size):
             line = ''
             for x in range(self.__size):
@@ -33,8 +37,6 @@ class Drawer():
                 if x < self.__size - 1:
                     line += ' '
             print(line + '\033[K')
-        if self.__clear:
-            sys.stdout.write(self.__size * '\033[F')
 
     def __get_cell(self, x, y, cursor, grid, grid_mask, shockwave=None):
         char = '?'

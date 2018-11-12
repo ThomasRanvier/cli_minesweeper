@@ -251,7 +251,7 @@ class Game():
         return count
 
     def get_cursor(self):
-        return self.__cursor
+        return deepcopy(self.__cursor)
     
     def get_status(self):
         return self.__status
