@@ -91,11 +91,11 @@ class Drawer():
     def display_end_screen(self, statut, grid, grid_mask, cursor):
         if statut == 'lost':
             self.__display_shockwave(grid, grid_mask, cursor)
-        self.__quit(grid, grid_mask, statut)
+        self.__quit(grid, grid_mask, statut, cursor)
 
-    def __quit(self, grid, grid_mask, statut):
+    def __quit(self, grid, grid_mask, statut, cursor):
         self.__clear = False
-        self.draw(grid, grid_mask, {'x': -1, 'y':-1})
+        self.draw(grid, grid_mask, cursor)
         print('')
         sys.stdout.write('\033[F\033[K')
         print('\n')
@@ -113,7 +113,7 @@ class Drawer():
             if iterations == 0 or iterations == 2 or iterations == 4 or iterations == 6 or iterations == 8:
                 shockwave[cursor['x']][cursor['y']] = 2
                 shockwave_2.add((cursor['x'], cursor['y']))
-            self.draw(grid, grid_mask, {'x': -1, 'y':-1}, shockwave)
+            self.draw(grid, grid_mask, cursor, shockwave)
 
             shockwave_1 = set()
             shockwave_out = True

@@ -11,7 +11,7 @@ MIN_SIZE = 10
 MAX_SIZE = 50
 
 class Game():
-    def __init__(self, size, bombs_proportion):
+    def __init__(self, size, bombs_proportion, no_cursor=False):
         random.seed(time.time())
 
         self.__size = size
