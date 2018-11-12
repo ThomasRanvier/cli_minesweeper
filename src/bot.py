@@ -34,16 +34,17 @@ class Bot():
                 if self.__grid[x][y] != None and self.__grid[x][y] > 0 and (x, y) not in self.__no_need_to_check_again:
                     flags_around = self.__count_around(x, y, -2)
                     hiddens_around = self.__count_around(x, y, None)
-                    logging.debug(str(x) + ' ' + str(y) + ': ' + str(flags_around) + ' ' + str(hiddens_around))
                     if self.__grid[x][y] > flags_around:
                         if hiddens_around + flags_around == self.__grid[x][y]:
                             self.__put_flags_around(x, y)
                             move_found = True
                     else:
-                        self.__reveal_around(x, y)
-                        self.__revealed_count += hiddens_around
+                        if hiddens_around > 0:
+                            logging.debug('reveal_around(' + str(x) + ', ' + str(y) + ')')
+                            self.__reveal_around(x, y)
+                            self.__revealed_count += hiddens_around
+                            move_found = True
                         self.__no_need_to_check_again.append((x, y))
-                        move_found = True
         return move_found
 
     def __put_flags_around(self, x, y):

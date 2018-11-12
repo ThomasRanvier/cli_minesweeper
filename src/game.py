@@ -2,7 +2,6 @@ from drawer import Drawer
 import getch
 import time
 import os
-import signal
 import random
 from copy import deepcopy
 
@@ -140,7 +139,7 @@ class Game():
     def __reveal_around(self):
         x = self.__cursor['x']
         y = self.__cursor['y']
-        if x > 0 and y > 0:
+        if x > 0 and y > 0 and self.__status == 'in_game':
             self.__reveal_cell(x - 1, y - 1)
         if x > 0 and self.__status == 'in_game':
             self.__reveal_cell(x - 1, y)
@@ -205,6 +204,8 @@ class Game():
                 new_cell = self.__flood(cell[0] + 1, cell[1] + 1)
                 if new_cell != None:
                     queue.append(new_cell)
+        if self.__hidden_count == 0:
+            self.__status = 'won'
     
     def __flood(self, x, y):
         cell = None

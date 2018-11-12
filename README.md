@@ -1,9 +1,9 @@
 # CLI minesweeper
 
-This project is about developing a minesweeper played with a command line interface.
+This project is about developing a minesweeper played with a command line interface, and then developing a bot to solve it automatically.
 
 Usage:
-> python3 minesweeper.py [-h] [-s SIZE] [-b BOMBS]
+> python3 minesweeper.py [-h] [-s SIZE] [-b BOMBS] [-a]
 
 optional arguments | decription
 --- | ---
@@ -17,6 +17,10 @@ The game is played with VIM controls:
 * j: deplace cursor down
 * k: deplace cursor up
 * l: deplace cursor right
+* H: deplace cursor at max left
+* J: deplace cursor at max down
+* K: deplace cursor at max up
+* L: deplace cursor at max right
 * space: reveal a cell, except if there is a flag on
 * f: place a flag
 * a: reveal all the cells around the selected cell, except where there are flags on
