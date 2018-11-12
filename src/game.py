@@ -11,8 +11,10 @@ MIN_SIZE = 10
 MAX_SIZE = 50
 
 class Game():
-    def __init__(self, size, bombs_proportion, no_cursor=False):
+    def __init__(self, size, bombs_proportion, no_cursor=False, no_drawing=False):
         random.seed(time.time())
+        self.__no_cursor = no_cursor
+        self.__no_drawing = no_drawing
 
         self.__size = size
         if self.__size < MIN_SIZE:
@@ -68,7 +70,8 @@ class Game():
 
     def __draw(self):
         if self.__status == 'in_game':
-            self.__drawer.draw(self.__grid, self.__grid_mask, self.__cursor)
+            if not self.__no_drawing:
+                self.__drawer.draw(self.__grid, self.__grid_mask, self.__cursor)
         else:
             self.__drawer.display_end_screen(self.__status, self.__grid, self.__grid_mask, self.__cursor)
 
@@ -89,42 +92,50 @@ class Game():
     def go_max_right(self):
         if self.__status == 'in_game':
             self.__cursor['x'] = self.__size - 1
-            self.__draw()
+            if not self.__no_cursor:
+                self.__draw()
 
     def go_max_up(self):
         if self.__status == 'in_game':
             self.__cursor['y'] = 0
-            self.__draw()
+            if not self.__no_cursor:
+                self.__draw()
 
     def go_max_left(self):
         if self.__status == 'in_game':
             self.__cursor['x'] = 0
-            self.__draw()
+            if not self.__no_cursor:
+                self.__draw()
 
     def go_max_down(self):
         if self.__status == 'in_game':
             self.__cursor['y'] = self.__size - 1
-            self.__draw()
+            if not self.__no_cursor:
+                self.__draw()
 
     def go_right(self):
         if self.__status == 'in_game' and self.__cursor['x'] < self.__size - 1:
             self.__cursor['x'] += 1
-            self.__draw()
+            if not self.__no_cursor:
+                self.__draw()
 
     def go_up(self):
         if self.__status == 'in_game' and self.__cursor['y'] > 0:
             self.__cursor['y'] -= 1
-            self.__draw()
+            if not self.__no_cursor:
+                self.__draw()
 
     def go_left(self):
         if self.__status == 'in_game' and self.__cursor['x'] > 0:
             self.__cursor['x'] -= 1
-            self.__draw()
+            if not self.__no_cursor:
+                self.__draw()
 
     def go_down(self):
         if self.__status == 'in_game' and self.__cursor['y'] < self.__size - 1:
             self.__cursor['y'] += 1
-            self.__draw()
+            if not self.__no_cursor:
+                self.__draw()
 
     def update_flag(self):
         if self.__status == 'in_game':
