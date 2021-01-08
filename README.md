@@ -27,6 +27,10 @@ The game is played with VIM controls:
 * f: place a flag
 * a: reveal all the cells around the selected cell, except where there are flags on
 
+All the steps in game:
+
+![game 20 by 20](20_20.gif "Game 20 by 20")
+
 Grid in game:
 
 ![grid 20 by 20](20_20.png "Grid 20 by 20")
